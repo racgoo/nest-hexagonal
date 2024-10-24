@@ -7,30 +7,33 @@ import { SqlitePaymentEntity } from './entities/sqlite-payment.entity';
 import { SqliteWebtoonRepository } from './repositories/sqlite-webtoon.repository';
 import { SqliteUserRepository } from './repositories/sqlite-user.repository';
 import { SqlitePaymentRepository } from './repositories/sqlite-payment.repository';
+import { SqlitePaymentItemEntity } from './entities/sqlite-payment-item.entity';
+import { SqlitePaymentItemRepository } from './repositories/sqlite-payment-item.repository';
 
+const entities = [
+  SqliteUserEntity,
+  SqliteWebtoonEntity,
+  SqlitePaymentEntity,
+  SqlitePaymentItemEntity,
+];
+
+const repositories = [
+  SqliteUserRepository,
+  SqliteWebtoonRepository,
+  SqlitePaymentRepository,
+  SqlitePaymentItemRepository,
+];
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'database.sqlite',
-      entities: [SqliteUserEntity, SqliteWebtoonEntity, SqlitePaymentEntity],
+      entities,
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([
-      SqliteUserEntity,
-      SqliteWebtoonEntity,
-      SqlitePaymentEntity,
-    ]),
+    TypeOrmModule.forFeature(entities),
   ],
-  providers: [
-    SqliteUserRepository,
-    SqliteWebtoonRepository,
-    SqlitePaymentRepository,
-  ],
-  exports: [
-    SqliteUserRepository,
-    SqliteWebtoonRepository,
-    SqlitePaymentRepository,
-  ],
+  providers: [...repositories],
+  exports: [...repositories],
 })
 export class SqliteModule {}

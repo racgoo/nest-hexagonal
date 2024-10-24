@@ -1,57 +1,59 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PaymentRepositoryPort } from 'src/domains/payment/ports/driven/payment.repository.interface';
-import { Payment } from 'src/domains/payment/entities/payment.entity';
-import { SqlitePaymentEntity } from '../entities/sqlite-payment.entity';
+import { PaymentRepositoryPort } from 'src/domains/payment/ports/driven/payment.repository.port';
+
+import {
+  PaymentRelations,
+  SqlitePaymentEntity,
+} from '../entities/sqlite-payment.entity';
+import { Payment } from 'src/domains/payment/models/payment.model';
 
 @Injectable()
 export class SqlitePaymentRepository implements PaymentRepositoryPort {
   constructor(
     @InjectRepository(SqlitePaymentEntity)
-    private readonly userRepository: Repository<SqlitePaymentEntity>,
+    private readonly paymentRepository: Repository<SqlitePaymentEntity>,
   ) {}
 
   async findById(id: number): Promise<Payment | null> {
-    const paymentEntity = await this.userRepository.findOne({
+    const paymentEntity = await this.paymentRepository.findOne({
       where: { id },
     });
-    return paymentEntity ? this.mapToDomain(paymentEntity) : null;
+    return paymentEntity ? SqlitePaymentEntity.toDomain(paymentEntity) : null;
+  }
+
+  async findByIdWithItems(id: number): Promise<Payment | null> {
+    const paymentEntity = await this.paymentRepository.findOne({
+      where: { id },
+      relations: [PaymentRelations.PAYMENT_ITEMS],
+    });
+    return paymentEntity ? SqlitePaymentEntity.toDomain(paymentEntity) : null;
   }
 
   async save(payment: Payment): Promise<Payment> {
-    const paymentEntity = this.mapToEntity(payment);
-    const savedEntity = await this.userRepository.save(paymentEntity);
-    return this.mapToDomain(savedEntity);
+    const paymentEntity = SqlitePaymentEntity.toEntity(payment);
+    console.log(paymentEntity);
+    console.log(SqlitePaymentEntity.toDomain(paymentEntity));
+
+    const savedEntity = await this.paymentRepository.save(paymentEntity);
+
+    console.log(SqlitePaymentEntity.toDomain(savedEntity));
+    return SqlitePaymentEntity.toDomain(savedEntity);
   }
 
-  async update(id: number, user: Partial<Payment>): Promise<Payment> {
-    await this.userRepository.update(id, user);
-    const updatedEntity = await this.userRepository.findOne({
+  async update(
+    id: number,
+    payment: Omit<Partial<Payment>, 'user' | 'paymentItems'>,
+  ): Promise<Payment> {
+    await this.paymentRepository.update(id, payment);
+    const updatedEntity = await this.paymentRepository.findOne({
       where: { id },
     });
-    return this.mapToDomain(updatedEntity);
+    return updatedEntity ? SqlitePaymentEntity.toDomain(updatedEntity) : null;
   }
 
   async delete(id: number): Promise<void> {
-    await this.userRepository.delete(id);
-  }
-
-  private mapToDomain(entity: SqlitePaymentEntity): Payment {
-    return new Payment({
-      id: entity.id,
-      userId: entity.userId,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    });
-  }
-
-  private mapToEntity(payment: Payment): SqlitePaymentEntity {
-    const entity = new SqlitePaymentEntity();
-    entity.id = payment.id;
-    entity.userId = payment.userId;
-    entity.createdAt = payment.createdAt;
-    entity.updatedAt = payment.updatedAt;
-    return entity;
+    await this.paymentRepository.delete(id);
   }
 }

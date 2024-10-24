@@ -1,4 +1,4 @@
-import { Payment } from '../../entities/payment.entity';
+import { Payment } from '../../models/payment.model';
 
 export interface CreatePaymentPort {
   execute(

@@ -1,8 +1,8 @@
-import { Webtoon } from '../../entities/webtoon.entity';
+import { Webtoon } from '../../models/webtoon.model';
 
-export interface WebtoonRepositoryPort {
-  findById(id: number): Promise<Webtoon | null>;
-  save(webtoon: Webtoon): Promise<Webtoon>;
-  update(id: number, webtoon: Partial<Webtoon>): Promise<Webtoon>;
-  delete(id: number): Promise<void>;
+export abstract class WebtoonRepositoryPort {
+  abstract findById(id: number): Promise<Webtoon | null>;
+  abstract save(webtoon: Webtoon): Promise<Webtoon>;
+  abstract update(id: number, webtoon: Partial<Webtoon>): Promise<Webtoon>;
+  abstract delete(id: number): Promise<void>;
 }

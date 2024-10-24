@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { WebtoonService } from '../services/webtoon.service';
-import { Webtoon } from '../entities/webtoon.entity';
+import { Webtoon } from '../models/webtoon.model';
 import { UpdateWebtoonPort } from '../ports/driving/update-webtoon.port';
 
 @Injectable()

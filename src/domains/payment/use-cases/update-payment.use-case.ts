@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { UpdatePaymentPort } from '../ports/driving/update-payment.port';
 import { PaymentService } from '../services/payment.service';
-import { Payment } from '../entities/payment.entity';
+import { Payment } from '../models/payment.model';
 
 @Injectable()
 export class UpdatePaymentUseCase implements UpdatePaymentPort {

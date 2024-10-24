@@ -1,4 +1,4 @@
-import { Webtoon } from '../../entities/webtoon.entity';
+import { Webtoon } from '../../models/webtoon.model';
 
 export interface CreateWebtoonPort {
   execute(

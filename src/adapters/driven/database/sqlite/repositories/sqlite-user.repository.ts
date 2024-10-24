@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { User } from '../../../../../domains/user/entities/user.entity';
+import { User } from '../../../../../domains/user/models/user.model';
 import { SqliteUserEntity } from '../entities/sqlite-user.entity';
 import { UserRepositoryPort } from 'src/domains/user/ports/driven/user.repository.port';
 
@@ -17,13 +17,20 @@ export class SqliteUserRepository implements UserRepositoryPort {
     const userEntity = await this.userRepository.findOne({
       where: { id },
     });
-    return userEntity ? this.mapToDomain(userEntity) : null;
+    return userEntity ? SqliteUserEntity.toDomain(userEntity) : null;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const userEntity = await this.userRepository.findOne({
+      where: { email },
+    });
+    return userEntity ? SqliteUserEntity.toDomain(userEntity) : null;
   }
 
   async save(user: User): Promise<User> {
-    const userEntity = this.mapToEntity(user);
+    const userEntity = SqliteUserEntity.toEntity(user);
     const savedEntity = await this.userRepository.save(userEntity);
-    return this.mapToDomain(savedEntity);
+    return SqliteUserEntity.toDomain(savedEntity);
   }
 
   async update(id: number, user: Partial<User>): Promise<User> {
@@ -31,32 +38,10 @@ export class SqliteUserRepository implements UserRepositoryPort {
     const updatedEntity = await this.userRepository.findOne({
       where: { id },
     });
-    return this.mapToDomain(updatedEntity);
+    return updatedEntity ? SqliteUserEntity.toDomain(updatedEntity) : null;
   }
 
   async delete(id: number): Promise<void> {
     await this.userRepository.delete(id);
-  }
-
-  private mapToDomain(entity: SqliteUserEntity): User {
-    return new User({
-      id: entity.id,
-      name: entity.name,
-      email: entity.email,
-      password: entity.password,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    });
-  }
-
-  private mapToEntity(user: User): SqliteUserEntity {
-    const entity = new SqliteUserEntity();
-    entity.id = user.id;
-    entity.name = user.name;
-    entity.email = user.email;
-    entity.password = user.password;
-    entity.createdAt = user.createdAt;
-    entity.updatedAt = user.updatedAt;
-    return entity;
   }
 }

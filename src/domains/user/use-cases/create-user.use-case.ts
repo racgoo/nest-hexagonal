@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserPort } from '../ports/driving/create-user.port';
-import { User } from '../entities/user.entity';
+import { User } from '../models/user.model';
 import { UserService } from '../services/user.service';
 
 @Injectable()

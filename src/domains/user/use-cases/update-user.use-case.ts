@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateUserPort } from '../ports/driving/update-user.port';
 import { UserService } from '../services/user.service';
-import { User } from '../entities/user.entity';
+import { User } from '../models/user.model';
 
 @Injectable()
 export class UpdateUserUseCase implements UpdateUserPort {

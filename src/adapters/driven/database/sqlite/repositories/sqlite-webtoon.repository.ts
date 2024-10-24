@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { WebtoonRepositoryPort } from '../../../../../domains/webtoon/ports/driven/webtoon.repository.port';
-import { Webtoon } from '../../../../../domains/webtoon/entities/webtoon.entity';
+import { Webtoon } from '../../../../../domains/webtoon/models/webtoon.model';
 import { SqliteWebtoonEntity } from '../entities/sqlite-webtoon.entity';
 
 @Injectable()
